@@ -5,16 +5,18 @@ import { WebAssembly, ArrayBuffer } from 'global';
 export const MODULE_URL = 'fractx_wasm_demo.gc.opt.wasm';
 
 export function instantiateWasmModule(Module, env) {
-  const memory = new WebAssembly.Memory({initial: 20});
+  // const memory = new WebAssembly.Memory({initial: 20});
 
   env = Object.assign({
     zoom_result(x0, y0, x1, y1) {}
-  }, env, {memory});
+  // }, env, {memory});
+  }, env);
 
   const allocCache = new Set();
 
   return fetchAndInstantiate(MODULE_URL, {env})
   .then(mod => {
+    const memory = mod.instance.exports.memory;
     Object.assign(Module, mod.instance.exports, {
       memory,
 

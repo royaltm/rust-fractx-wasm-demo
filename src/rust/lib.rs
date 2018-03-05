@@ -1,5 +1,5 @@
-#![feature(wasm_import_memory)]
-#![wasm_import_memory]
+// #![feature(wasm_import_memory)]
+// #![wasm_import_memory]
 
 extern crate fractx;
 
