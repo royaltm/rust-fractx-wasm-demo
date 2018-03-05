@@ -48,12 +48,16 @@ distclean: clean
 
 # gzip all files in static for distribution
 gzip:
-		for file in static/*.{css,js,map,html,wasm}; do gzip "$file" -c >"$file".gz; done
+		for file in static/*.{css,js,map,html,wasm}; do \
+			gzip -9 -c "$file" >"$file".gz && touch -r "$file" "$file".gz; \
+		done
 
 fetch:
 		curl -f https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css -o static/bootstrap.min.css
 		curl -f https://unpkg.com/popper.js@1.12.9/dist/umd/popper.min.js -o static/popper.min.js
 
 # prepare distribution tar
-dist: all fetch gzip
+pack:
 		tar -cvjf {{name}}.tar.bz2 static
+
+dist: all fetch gzip pack
