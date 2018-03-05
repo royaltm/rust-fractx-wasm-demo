@@ -324,6 +324,8 @@ function run() {
     Sandbox.fractal.save(width, height, {layout: Sandbox.layout});
   },
   err => { /* job canceled */
-    if (err.message !== 'job canceled') throw Error(err);
+    if (err.message !== 'job canceled') {
+      throw err;
+    }
   });
 }
