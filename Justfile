@@ -5,11 +5,11 @@ target_dir = 'target/wasm32-unknown-unknown/release/'
 all: wasm rollup
 
 # build and optimize wasm files and copy to static
-wasm: buld gc opt
+wasm: build gc opt
 		cp {{target_dir}}{{name}}.gc.opt.wasm static/
 
 # build wasm files
-buld:
+build:
 		cargo +nightly build --lib --release
 
 # make the binary a little smaller (working around bugs in rustc toolchain)
