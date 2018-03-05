@@ -162,14 +162,23 @@ wasm.instantiateWasmModule(Module, {zoom_result})
   });
 
   Sandbox.aboutPopper = new window.Popper(Sandbox.help, Sandbox.about, {placement: 'left'});
-  Sandbox.about.addEventListener("click", (ev) => { ev.stopPropagation(); });
+  Sandbox.about.addEventListener("click", (ev) => { ev.stopPropagation(); }, false);
+  Sandbox.about.addEventListener("transitionend", (ev) => {
+    var element = ev.target;
+    if (ev.propertyName === 'opacity' && element === Sandbox.about && !element.classList.contains('show')) {
+      element.style.zIndex = -1;
+    }
+  }, false);
   Sandbox.body.addEventListener("click", (ev) => {
     Sandbox.about.classList.remove('show');
-  });
+  }, false);
   Sandbox.help.addEventListener("click", (ev) => {
-    Sandbox.about.classList.toggle('show');
+    var element = Sandbox.about;
+    if (element.classList.toggle('show')) {
+      element.style.zIndex = null;
+    }
     ev.stopPropagation();
-  });
+  }, false);
 
   Sandbox.layout = layouts[0];
   Sandbox.setLayout = function(layout) {
@@ -193,14 +202,14 @@ wasm.instantiateWasmModule(Module, {zoom_result})
 
   Sandbox.vsync.addEventListener("change", (_) => {
     Sandbox.splitter.vsync = Sandbox.vsync.checked;
-  });
+  }, false);
 
   Sandbox.canvas.addEventListener("mousemove", (ev) => {
     var {x, y} = getEventLocation(ev.target, ev);
     var {x, y} = Sandbox.fractal.viewCoords(x, y);
     Sandbox.x.value = x;
     Sandbox.y.value = y;
-  });
+  }, false);
 
   Sandbox.queue.ready().then(() => {
     ["bottom-info", "top-info"].forEach(id => {
@@ -215,7 +224,7 @@ wasm.instantiateWasmModule(Module, {zoom_result})
           Sandbox.setLayout(layout);
           resize();
         }
-      });
+      }, false);
       Sandbox[elm.id] = elm;
     });
 
@@ -230,13 +239,13 @@ wasm.instantiateWasmModule(Module, {zoom_result})
       }
       Sandbox.fractal.iter = Sandbox.iterations.value = iter;
       run();
-    }));
+    }, false));
 
     Sandbox.reset.addEventListener("click", (_) => {
       var {width, height} = Sandbox.canvas;
       Sandbox.fractal.resetWindow(width, height);
       run();
-    });
+    }, false);
 
     Sandbox.iterations.addEventListener("input", (_) => {
       var iter = parseInt(Sandbox.iterations.value);
