@@ -10,7 +10,7 @@ Building
 
 ### Prerequisites
 
-- [Rust](https://www.rust-lang.org/pl-PL/) via [rustup](https://www.rustup.rs)
+- [Rust](https://www.rust-lang.org/) via [rustup](https://www.rustup.rs)
 - `rustup install nightly`
 - `rustup target add wasm32-unknown-unknown --toolchain nightly`
 - `cargo +stable install wasm-gc`
@@ -59,7 +59,7 @@ rollup -c
 
 Now point some http server to serve files from `static` directory.
 Make sure it has mime type: `application/wasm` assigned to `.wasm` files.
-On windows one may use this registry file [[resources/wasm.mime-type.reg]].
+On windows one may use this [registry file](resources/wasm.mime-type.reg).
 
 I'am quite used to [devd](https://github.com/cortesi/devd/releases), e.g.:
 
