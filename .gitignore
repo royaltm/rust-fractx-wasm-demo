@@ -1,0 +1,8 @@
+/target
+**/*.rs.bk
+Cargo.lock
+static/*.map
+static/*.wasm
+static/master.js
+static/module.js
+static/*.gz
