@@ -5,4 +5,7 @@ static/*.map
 static/*.wasm
 static/master.js
 static/module.js
+static/bootstrap.min.css
+static/popper.min.js
 static/*.gz
+*.tar.bz2
