@@ -39,6 +39,11 @@ function onMessage(e) {
 
   Module.fractx(imageData.data.byteOffset, w, h, x0, y0, dx, dy, iter);
 
+  /* we need to make a copy here
+     the data wasm module has access to
+     can't be used in other asynchronous contexts */
+  imageData = new ImageData(imageData.data.slice(), imageData.width, imageData.height);
+
   retry();
 
   function retry() {
