@@ -1,5 +1,5 @@
-name = 'fractx_wasm_demo'
-target_dir = 'target/wasm32-unknown-unknown/release/'
+name := 'fractx_wasm_demo'
+target_dir := 'target/wasm32-unknown-unknown/release/'
 
 # build all
 all: wasm rollup
