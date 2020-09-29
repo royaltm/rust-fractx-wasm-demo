@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="application-name" content="fractx">
+    <meta name="author" content="Rafał Michalski">
+    <meta name="description" content="Explore the depths of the Mandelbrot's fractal realm. A WebAssembly test.">
+    <meta name="keywords" content="WebAssembly,Mandelbrot,fractal">
+    <!--
+      Hail Eris! All Hail Discordia!
+      Greetings to Monster, Frk and Grych.
+    -->
+    <title>fract-x</title>
+
+    <link rel="stylesheet" href="bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="module.js"></script>
+    <script src="popper.min.js" defer></script>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        overflow: hidden; /*  Disable scrollbars */
+        display: block;  /* No floating content on sides */
+        background-color: #434343;
+        background-image:linear-gradient(#434343, #282828);
+      }
+      nav#top-info, nav#bottom-info {
+        position: absolute; left: 0px; z-index: 1000; width: 100%; padding: 2px;
+        background-color: transparent;
+      }
+      nav#top-info { top: 0px; }
+      nav#bottom-info { bottom: 0px; }
+      nav#bottom-info form { padding: 0; }
+      canvas#fractx { cursor: zoom-in; position: absolute; z-index: 10;}
+      nav#top-info button.btn-outline-secondary:not(:hover) { background-color: #e9ecef; }
+      button#help { margin-left: auto; }
+      /* thanks https://twitter.com/jasonadelia for the gradient */
+      label[for=vsync] { text-shadow: 1px 1px 0 #e9ecef; }
+      #bg {
+        position: absolute; left: 0px; top: 0px; z-index: 0;
+        background-color: transparent;
+        background-image: linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent);
+        width: 100%; height:100%;
+        background-size:50px 50px;
+      }
+      #about { min-width: 350px; }
+      #alert { position: absolute; z-index: 10000; margin: 0 auto; left: 0; right: 0; max-width: 800px; }
+    </style>
+  </head>
+  <body>
+    <div id="alert" class="alert alert-danger" role="alert">
+      <strong>Required web technology not detected!</strong>
+      <p>This program in order to be working requires some cutting-edge technology to be enabled in your browser.</p>
+      <p>We have detected that <data id="feature" itemprop="failedFeature">some feature</data> is not available in your browser.</p>
+      <p>Update or change your browser and then get back.</p>
+        <a class="btn btn-primary btn-lg" href="http://outdatedbrowser.com/">Update my browser now</a>
+    </div>
+    <div id="bg"></div>
+    <script type="text/javascript">
+    (function() {
+      var alert = document.getElementById('alert');
+      try {
+        /* check edge features */
+        if ('undefined' === typeof window.WebAssembly) {
+          throw Error("required browser with WebAssembly support");
+        }
+        if ('function' !== typeof window.requestAnimationFrame) {
+          throw Error("required browser with requestAnimationFrame support");
+        }
+        if ('function' !== typeof window.Worker) {
+          throw Error("required browser with Worker support");
+        }
+        if ('function' !== typeof window.fetch) {
+          throw Error("required browser with fetch support");
+        }
+        // if ('function' !== typeof window.TextDecoder) {
+        //   throw Error("required browser with TextDecoder support");
+        // }
+        if ('function' !== typeof window.ImageBitmap) {
+          throw Error("required browser with ImageBitmap support");
+        }
+      } catch(err) {
+        if (err.message.substr(0, 22) === 'required browser with ') {
+          document.getElementById('feature').innerHTML = '<strong>' + err.message.substr(22).split(' ', 1)[0] + '</strong>';
+        }
+        throw err;
+      }
+      alert.parentElement.removeChild(alert);
+      var head = document.head || document.getElementsByTagName("head")[0];
+      var script = document.createElement("script");
+      script.type = "text\/javascript";
+      script.defer = true;
+      head.appendChild(script);
+      script.src = "master.js";
+    })();
+    </script>
+    <div id="about" class="popover fade bs-popover-left" style="z-index: -1;" role="tooltip"><div class="arrow"></div><h3 class="popover-header">Mandelbrot set - WebAssembly Demo</h3>
+      <div class="popover-body">Click anywhere on the fractal image to zoom in.
+        <br/><br/>Use a wheel-like instrument located somewhere on your pointing device to zoom in and out.
+        <br/><br/>Right click on a fractal image and choose "Save&nbsp;image&nbsp;as" to save the image of the current view.
+        <br/><br/>Increase the number of iterations to increase level of details.
+        <br/><br/>Explore!
+        <br/><br/><time itemprop="createDate" datetime="2018-03-05T01:33:31.327+01:00">2018-03-05</time> (c) Rafał Michalski&nbsp;&nbsp;<a class="float-right" itemprop="source" href="https://github.com/royaltm/rust-fractx-wasm-demo" target="_blank">source code</a>
+      </div>
+    </div>
+    <nav id="top-info" class="fade">
+      <form class="form-inline">
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="iter1">Iterations:</span>
+          </div>
+          <input type="number" id="iterations" class="form-control" placeholder="Iterations" aria-label="Iterations" aria-describedby="iter1" value="50" min="1" max="5000">
+          <div class="input-group-append">
+            <button id="incr-iter" class="btn btn-outline-secondary" type="button">&times;&nbsp;2</button>
+            <button id="decr-iter" class="btn btn-outline-secondary" type="button">&#xf7;&nbsp;2</button>
+          </div>
+        </div>
+        <div class="input-group input-group-sm">
+          <div class="form-check form-check-inline">
+            <label class="form-check-label" for="vsync">&nbsp;VSync&nbsp;</label>
+            <input class="form-check-input" type="checkbox" id="vsync">
+          </div>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+          <button id="fullscreen" type="button" class="btn btn-secondary">Full screen</button>
+          <button id="halfscreen" type="button" class="btn btn-secondary">Quarter window</button>
+          <button id="constscreen" type="button" class="btn btn-secondary">700x400</button>
+        </div>
+        &nbsp;
+        <button id="reset" type="button" class="btn btn-warning btn-sm">Reset</button>
+        <button id="help" type="button" class="btn btn-primary btn-sm" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">?</button>
+      </form>
+    </nav>
+    <nav id="bottom-info" class="fade">
+      <form class="form-inline">
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">cx cy</span>
+          </div>
+          <input type="text" id="x" class="form-control" readonly>
+          <input type="text" id="y" class="form-control" readonly>
+        </div>
+        &nbsp;
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">x0 y0</span>
+          </div>
+          <input type="text" id="x0" class="form-control" readonly>
+          <input type="text" id="y0" class="form-control" readonly>
+        </div>
+        &nbsp;
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">x1 y1</span>
+          </div>
+          <input type="text" id="x1" class="form-control" readonly>
+          <input type="text" id="y1" class="form-control" readonly>
+        </div>
+      </form>
+    </nav>
+  </body>
+</html>
