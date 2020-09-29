@@ -3,7 +3,7 @@ FractX WebAssembly Demo
 
 This is my first WebAssembly program.
 
-See [live demo](https://yeondir.com/fractx-demo/)!
+See [live demo](https://royaltm.github.io/rust-fractx-wasm-demo/)!
 
 Building
 --------

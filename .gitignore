@@ -8,4 +8,5 @@ static/module.js
 static/bootstrap.min.css
 static/popper.min.js
 static/*.gz
+/dist/
 *.tar.bz2
